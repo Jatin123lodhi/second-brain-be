@@ -1,0 +1,25 @@
+npm init --y  // creates a package.json file
+npm i -D typescript
+npx init tsc  // creates a config file
+
+in tsconfig file-
+outdir - "./dist"
+rootdir - "./src"
+
+npm i express
+import express from "express"  // used mordern import syntax
+npm i -D @types/express
+
+npm i mongoose   // have built in types module
+npm i jsonwebtoken @types/jsonwebtoken
+
+"build": "tsc -b",
+"start": "node dist/index.js",
+"dev" : "npm run build && npm run start"
+
+
+npm i -D ts-node-dev
+"dev": "ts-node-dev --respawn --transpile-only src/index.ts"
+ 
+--respawn: Automatically restarts the server on file changes.
+--transpile-only: Skips type checking for faster restarts (type checking is done during builds).
