@@ -6,6 +6,7 @@ import { jwt_password } from "./config";
 import { userMiddleware } from "./middleware";
 import { random } from "./utils";
 import cors from "cors"
+import { z } from "zod"
 
 const app = express()
 const PORT = 3000
@@ -19,12 +20,30 @@ app.get("/", (req, res) => {
 
 // we have not used try catch anywhere
 app.post('/api/v1/signup', async (req, res) => {
+    const requiredBody = z.object({
+        username: z.string().min(3).max(20),
+        password: z.string().min(3).max(20).refine(
+            (password) => 
+                /[A-Z]/.test(password) && // Alteast one upper case character
+                /[a-z]/.test(password) && // Atleast one lower case character
+                /[\W_]/.test(password) // Atleast one special character
+            ,
+            {
+                message: "Password must include atleast one uppercase letter, one lowercase letter, and one special character."
+            }
+        )
+    })
+
+    const parsedDataWithSuccess = requiredBody.safeParse(req.body)
+    if(!parsedDataWithSuccess.success){
+        res.json({
+            message: "Incorrect Format",
+            error: parsedDataWithSuccess.error
+        })
+        return
+    }
     const { username, password } = req.body
-    // server side validation 
 
-
-    // main logic to signup
-    // is username already exists ?
     console.log(req.body)
     try {
         const user = await UserModel.findOne({ username })
