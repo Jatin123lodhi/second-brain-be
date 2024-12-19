@@ -27,7 +27,6 @@ export const TagModel = model("Tag",TagSchema)
 
 const ContentSchema = new Schema({
     title: String,
-    description: String,
     link: String,
     type: String,
     userId: { type: mongoose.Types.ObjectId, ref: 'User', required: true },  // foreign key from user table

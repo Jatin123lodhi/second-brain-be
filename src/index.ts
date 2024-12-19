@@ -7,6 +7,7 @@ import { userMiddleware } from "./middleware";
 import { random } from "./utils";
 import cors from "cors"
 import { z } from "zod"
+import mongoose from "mongoose";
 
 const app = express()
 const PORT = 3000
@@ -36,7 +37,7 @@ app.post('/api/v1/signup', async (req, res) => {
 
     const parsedDataWithSuccess = requiredBody.safeParse(req.body)
     if(!parsedDataWithSuccess.success){
-        res.json({
+        res.status(400).json({
             message: "Incorrect Format",
             error: parsedDataWithSuccess.error
         })
@@ -69,10 +70,19 @@ app.post('/api/v1/signup', async (req, res) => {
 
 
 app.post('/api/v1/signin', async (req, res) => {
+    const requiredBody = z.object({
+        username: z.string().min(3).max(20),
+        password: z.string().min(3).max(20)
+    })
+    const parsedDataWithSuccess = requiredBody.safeParse(req.body)
+    if(!parsedDataWithSuccess.success){
+        res.status(400).json({
+            message: "Invalid input"
+        })
+        return 
+    }
     const { username, password } = req.body
-    // server side validations of payload
-    // main logic of signin
-    // is username present ?
+    
     try {
         const existingUser = await UserModel.findOne({ username })
         if (!existingUser) {
@@ -97,11 +107,18 @@ app.post('/api/v1/signin', async (req, res) => {
 })
 
 app.post('/api/v1/tag', async (req, res) => {
-    // create tag
+    const requiredBody = z.object({
+        title: z.string().max(100)
+    })
+    const parsedDataWithSuccess = requiredBody.safeParse(req.body)
+    if(!parsedDataWithSuccess.success){
+        res.status(400).json({
+            message: "Invalid Input"
+        })
+        return
+    }
     const { title } = req.body
-    // payload validation
-
-    // logic
+    
     try {
         const existingTag = await TagModel.findOne({ title })
         if (existingTag) {
@@ -118,6 +135,23 @@ app.post('/api/v1/tag', async (req, res) => {
 
 // add-content
 app.post('/api/v1/content', userMiddleware, async (req, res) => {
+    const requiredBody = z.object({
+        title: z.string().min(3).max(100),
+        link: z.string(),
+        type: z.string().min(3).max(30),
+        userId: z.string()
+        .refine((value) => mongoose.Types.ObjectId.isValid(value),
+        {
+            message: "Invalid ObjectId format",
+        })
+    })
+    const parsedDataWithSuccess = requiredBody.safeParse(req.body)
+    if(!parsedDataWithSuccess.success){
+        res.status(400).json({
+            message: "Invalid Input"
+        })
+        return
+    }
     try {
         console.log(req.body, '  req.body  ')
         const newContent = new ContentModel({ ...req.body, userId: req.userId })
@@ -130,6 +164,7 @@ app.post('/api/v1/content', userMiddleware, async (req, res) => {
 })
 
 app.get('/api/v1/content', userMiddleware, async (req, res) => {
+    
     try {
         const data = await ContentModel.find({ userId: req.userId })
         res.json(data)
@@ -167,7 +202,14 @@ app.patch('/api/v1/update-content/:contentId', userMiddleware, async (req, res) 
 
 
 app.post('/api/v1/brain/share', userMiddleware, async (req, res) => {
+    const requiredBody = z.object({share: z.boolean()})
+    const parsedDataWithSuccess = requiredBody.safeParse(req.body)
+    if(!parsedDataWithSuccess.success){
+        res.status(400).json({message: "Invalid input"})
+        return
+    }
     const share = req.body.share
+
     try {
         if (share) {
             const existingLink = await LinkModel.findOne({ userId: req.userId })
