@@ -1,6 +1,6 @@
 import express, { json, NextFunction, Request, Response } from "express"
 import { ContentModel, LinkModel, TagModel, UserModel } from "./db"
-import bcrypt from "bcrypt"
+import bcrypt from "bcryptjs"
 import jwt from 'jsonwebtoken';
 import { jwt_password } from "./config";
 import { userMiddleware } from "./middleware";
