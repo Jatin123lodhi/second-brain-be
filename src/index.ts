@@ -49,7 +49,7 @@ app.post('/api/v1/signup', async (req, res) => {
 
     console.log(req.body)
     try {
-        // const user = await UserModel.findOne({ username })
+        // const user = await UserModel.findOne({ username }) 
         const user = await prisma.users.findUnique({
             where: {
                 username
