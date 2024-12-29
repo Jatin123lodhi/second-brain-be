@@ -1,6 +1,6 @@
 import mongoose, { Mongoose, Schema, model } from "mongoose";
 
-mongoose.connect('mongodb://localhost:27017/second-brain')
+mongoose.connect('mongodb+srv://jatinwin1:HkKSTWivOiEY6UtV@cluster0.ctmfg.mongodb.net/second-brain')
 .then(res=>{
     console.log('Connected to db!')
 })
