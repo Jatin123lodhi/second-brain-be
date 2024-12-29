@@ -28,4 +28,15 @@ jobs:
 
     - name: Verify Pushed Image
       run: docker pull jatin123lodhi/brainly-be:latest  # Replace with your Docker Hub username and repository
-  
+    
+    - name: Deploy to EC2
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          sudo docker pull jatin123lodhi/brainly-be:latest
+          sudo docker stop brainly-be || true
+          sudo docker rm brainly-be || true
+          sudo docker run -d --name brainly-be -p 3005:3000 jatin123lodhi/brainly-be:latest  
