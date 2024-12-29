@@ -39,4 +39,4 @@ jobs:
           sudo docker pull jatin123lodhi/brainly-be:latest
           sudo docker stop brainly-be || true
           sudo docker rm brainly-be || true
-          sudo docker run -d --name brainly-be -p 3005:3000 jatin123lodhi/brainly-be:latest  
+          sudo docker run -d --name brainly-be -p 3000:3000 jatin123lodhi/brainly-be:latest  
